@@ -144,6 +144,8 @@ export default function App() {
                     <div ref={messagesEndRef} />
                 </div>
             </main>
+            
+            {/* some changes */}
 
             <footer className="p-4 bg-white border-t">
                 <div className="max-w-3xl mx-auto">

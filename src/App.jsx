@@ -4,6 +4,9 @@ import {
     Database, Shield, Cpu, Globe, Clock, AlertTriangle, Search
 } from 'lucide-react';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 // 1. DATA DEFINITIONS (Outside so they are stable)
 const AGENTS = [
     {
@@ -107,7 +110,12 @@ const ChatView = ({ messages, input, setInput, handleSend, setView, messagesEndR
                                 <div className="flex items-center gap-2 italic animate-pulse">
                                     <Terminal size={14} /> {msg.content}
                                 </div>
-                            ) : msg.content}
+                            ) : /* Use ReactMarkdown here for the agent's response */
+                                <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert text-white' : 'text-slate-800'}`}>
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {msg.content}
+                                    </ReactMarkdown>
+                                </div>}
                         </div>
                     </div>
                 ))}

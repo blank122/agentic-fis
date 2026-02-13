@@ -6,6 +6,7 @@ import {
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import AgentVisualizer from './AgentVisualizer';
 
 // 1. DATA DEFINITIONS (Outside so they are stable)
 const AGENTS = [
@@ -105,17 +106,26 @@ const ChatView = ({ messages, input, setInput, handleSend, setView, messagesEndR
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
                             {msg.role === 'assistant' ? <Bot size={16} /> : <User size={16} />}
                         </div>
-                        <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.role === 'assistant' ? 'bg-white border border-slate-200 rounded-tl-none text-slate-800' : 'bg-blue-600 rounded-tr-none text-white'}`}>
+                        {/* <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.role === 'assistant' ? 'bg-white border border-slate-200 rounded-tl-none text-slate-800' : 'bg-blue-600 rounded-tr-none text-white'}`}>
                             {msg.isThinking ? (
                                 <div className="flex items-center gap-2 italic animate-pulse">
                                     <Terminal size={14} /> {msg.content}
                                 </div>
-                            ) : /* Use ReactMarkdown here for the agent's response */
+                            ) :
                                 <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert text-white' : 'text-slate-800'}`}>
                                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                         {msg.content}
                                     </ReactMarkdown>
                                 </div>}
+                        </div> */}
+                        <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm ...`}>
+                            {msg.isThinking ? (
+                                <div className="flex items-center gap-2 italic animate-pulse">
+                                    <Terminal size={14} /> {msg.content}
+                                </div>
+                            ) : (
+                                <AgentVisualizer content={msg.content} />
+                            )}
                         </div>
                     </div>
                 ))}

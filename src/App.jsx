@@ -148,6 +148,7 @@ export default function App() {
         if (view === 'chat') scrollToBottom();
     }, [messages, view]);
 
+   
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
         const userMessage = { role: 'user', content: input };
@@ -155,25 +156,61 @@ export default function App() {
         setInput('');
         setIsLoading(true);
 
-        setMessages(prev => [...prev, { role: 'assistant', content: 'Analyzing...', isThinking: true }]);
+        setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: 'Analyzing request via Databricks Agent...',
+            isThinking: true
+        }]);
 
         try {
             const response = await fetch('https://dbrix-orchestrator-2.onrender.com/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                // send `input` (list of messages) to match backend + Databricks
                 body: JSON.stringify({ input: [...messages, userMessage] }),
             });
+
             const data = await response.json();
+
             setMessages(prev => {
                 const filtered = prev.filter(m => !m.isThinking);
-                return [...filtered, { role: 'assistant', content: data.output?.[0]?.content?.[0]?.text || "No response." }];
+
+                // Prefer Databricks agents response shape
+                const outputs = data.output || [];
+                let replyText = null;
+
+                // Walk outputs from last to first, pick the first non-<name>... tag
+                for (let i = outputs.length - 1; i >= 0; i--) {
+                    const t = outputs[i]?.content?.[0]?.text?.trim();
+                    if (t && !/^<name>.*<\/name>$/i.test(t)) {
+                        replyText = t;
+                        break;
+                    }
+                }
+
+                // Fallbacks for other response formats
+                if (!replyText) {
+                    replyText =
+                        data.choices?.[0]?.message?.content ??
+                        data.result ??
+                        "No response received.";
+                }
+
+                return [
+                    ...filtered,
+                    {
+                        role: 'assistant',
+                        content: replyText,
+                    },
+                ];
             });
         } catch (error) {
-            setMessages(prev => [...prev.filter(m => !m.isThinking), { role: 'assistant', content: 'Error.' }]);
+            setMessages(prev => [...prev.filter(m => !m.isThinking), { role: 'assistant', content: 'Error connecting to service.' }]);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     return (
         <div className="flex h-screen bg-slate-50 font-sans text-slate-900">

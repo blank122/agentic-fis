@@ -17,34 +17,33 @@ export default function App() {
             title: "Investment Portfolio & Financial Analysis Agent",
             desc: "Money in / money out, comparisons, trends, portfolio concentration.",
             icon: <Database className="text-blue-500" />,
-            capability: "Workflow Automation"
+            capability: "Financial Intelligence"
         },
         {
             title: "Country & Regional Strategy Agent",
             desc: "Geographic performance, country comparisons, regional strategy.",
-            icon: <Globe className="text-emerald-500" />, // Changed to Globe
-            capability: "Audit & Compliance"
+            icon: <Globe className="text-emerald-500" />,
+            capability: "Geospatial Analysis"
         },
         {
             title: "Project Timeline & Delivery Monitoring Agent",
             desc: "Delays, timelines, approvals vs reality, execution health.",
-            icon: <Clock className="text-amber-500" />, // Changed to Clock
-            capability: "Resource Management"
+            icon: <Clock className="text-amber-500" />,
+            capability: "Project Operations"
         },
         {
             title: "Risk, Status & Compliance Agent",
             desc: "Risk exposure, environmental categories, project status health.",
-            icon: <AlertTriangle className="text-rose-500" />, // Changed to AlertTriangle
-            capability: "Resource Management"
+            icon: <AlertTriangle className="text-rose-500" />,
+            capability: "Risk Mitigation"
         },
         {
             title: "Web Agent",
             desc: "Filtering by document types, disclosure rules, metadata exploration.",
-            icon: <Search className="text-indigo-500" />, // Changed to Search
-            capability: "Resource Management"
+            icon: <Search className="text-indigo-500" />,
+            capability: "Information Retrieval"
         }
     ];
-
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };

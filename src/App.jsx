@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Send, Bot, User, Paperclip, Terminal, Zap, ArrowRight, 
-  Database, Shield, Cpu, Globe, Clock, AlertTriangle, Search 
+import {
+    Send, Bot, User, Paperclip, Terminal, Zap, ArrowRight,
+    Database, Shield, Cpu, Globe, Clock, AlertTriangle, Search
 } from 'lucide-react';
 
 // 1. DATA DEFINITIONS (Outside so they are stable)
@@ -10,31 +10,37 @@ const AGENTS = [
         title: "Investment Portfolio & Financial Analysis Agent",
         desc: "Money in / money out, comparisons, trends, portfolio concentration.",
         icon: <Database className="text-blue-500" />,
-        capability: "Financial Intelligence" 
+        capability: "Financial Intelligence"
     },
     {
         title: "Country & Regional Strategy Agent",
         desc: "Geographic performance, country comparisons, regional strategy.",
         icon: <Globe className="text-emerald-500" />,
-        capability: "Geospatial Analysis" 
+        capability: "Geospatial Analysis"
     },
     {
         title: "Project Timeline & Delivery Monitoring Agent",
         desc: "Delays, timelines, approvals vs reality, execution health.",
         icon: <Clock className="text-amber-500" />,
-        capability: "Project Operations" 
+        capability: "Project Operations"
     },
     {
         title: "Risk, Status & Compliance Agent",
         desc: "Risk exposure, environmental categories, project status health.",
         icon: <AlertTriangle className="text-rose-500" />,
-        capability: "Risk Mitigation" 
+        capability: "Risk Mitigation"
+    },
+    {
+        title: "Document & Project Discovery Agent",
+        desc: "Filtering by document types, disclosure rules, metadata exploration.",
+        icon: <AlertTriangle className="text-rose-500" />,
+        capability: "Risk Mitigation"
     },
     {
         title: "Web Agent",
         desc: "Filtering by document types, disclosure rules, metadata exploration.",
         icon: <Search className="text-indigo-500" />,
-        capability: "Information Retrieval" 
+        capability: "Information Retrieval"
     }
 ];
 
@@ -48,9 +54,9 @@ const HomeView = ({ setView }) => (
                 </div>
                 <h1 className="text-5xl font-bold text-slate-900 mb-6">FIS Agentic Hub</h1>
                 <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                    Deploy, manage, and interact with specialized AI agents powered by Databricks Mosaic AI.
+                    Interact with specialized AI agents powered by Databricks Mosaic AI.
                 </p>
-                <button 
+                <button
                     onClick={() => setView('chat')}
                     className="mt-10 bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition flex items-center gap-2 mx-auto shadow-lg shadow-blue-200"
                 >
@@ -132,7 +138,7 @@ const ChatView = ({ messages, input, setInput, handleSend, setView, messagesEndR
 
 // 3. MAIN COMPONENT
 export default function App() {
-    const [view, setView] = useState('home'); 
+    const [view, setView] = useState('home');
     const [messages, setMessages] = useState([
         { role: 'assistant', content: 'Hello! I am FIS Agent. How can I assist with you today?' }
     ]);
@@ -148,7 +154,6 @@ export default function App() {
         if (view === 'chat') scrollToBottom();
     }, [messages, view]);
 
-   
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
         const userMessage = { role: 'user', content: input };
@@ -211,7 +216,6 @@ export default function App() {
         }
     };
 
-
     return (
         <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
             <div className="hidden md:flex w-64 flex-col bg-slate-900 text-white">
@@ -219,7 +223,7 @@ export default function App() {
                     <Zap className="text-blue-400" /> FIS Agentic Hub
                 </div>
                 <div className="flex-1 p-4">
-                    <button 
+                    <button
                         onClick={() => setView('chat')}
                         className={`w-full text-left p-3 rounded-lg text-sm transition ${view === 'chat' ? 'bg-slate-800 border-l-4 border-blue-500' : 'hover:bg-slate-800'}`}
                     >
@@ -231,13 +235,13 @@ export default function App() {
             {view === 'home' ? (
                 <HomeView setView={setView} />
             ) : (
-                <ChatView 
-                    setView={setView} 
-                    messages={messages} 
-                    input={input} 
-                    setInput={setInput} 
-                    handleSend={handleSend} 
-                    messagesEndRef={messagesEndRef} 
+                <ChatView
+                    setView={setView}
+                    messages={messages}
+                    input={input}
+                    setInput={setInput}
+                    handleSend={handleSend}
+                    messagesEndRef={messagesEndRef}
                 />
             )}
         </div>

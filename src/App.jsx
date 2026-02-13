@@ -7,7 +7,7 @@ import {
 // 1. DATA DEFINITIONS (Outside so they are stable)
 const AGENTS = [
     {
-        title: "Investment Portfolio & Financial Analysis Agent",
+        title: "Executive Portfolio Advisor",
         desc: "Money in / money out, comparisons, trends, portfolio concentration.",
         icon: <Database className="text-blue-500" />,
         capability: "Financial Intelligence"
@@ -19,26 +19,26 @@ const AGENTS = [
         capability: "Geospatial Analysis"
     },
     {
-        title: "Project Timeline & Delivery Monitoring Agent",
+        title: "Project Delivery & Timeline Agent",
         desc: "Delays, timelines, approvals vs reality, execution health.",
         icon: <Clock className="text-amber-500" />,
         capability: "Project Operations"
     },
     {
-        title: "Risk, Status & Compliance Agent",
+        title: "Document & Project Intelligence Agent",
+        desc: "Filtering by document types, disclosure rules, metadata exploration.",
+        icon: <Shield className="text-rose-500" />,
+        capability: "Information Retrieval"
+    },
+    {
+        title: "Risk & Compliance Agent",
         desc: "Risk exposure, environmental categories, project status health.",
         icon: <AlertTriangle className="text-rose-500" />,
         capability: "Risk Mitigation"
     },
     {
-        title: "Document & Project Discovery Agent",
-        desc: "Filtering by document types, disclosure rules, metadata exploration.",
-        icon: <AlertTriangle className="text-rose-500" />,
-        capability: "Risk Mitigation"
-    },
-    {
         title: "Web Agent",
-        desc: "Filtering by document types, disclosure rules, metadata exploration.",
+        desc: "Online search tool via DuckDuckGo.",
         icon: <Search className="text-indigo-500" />,
         capability: "Information Retrieval"
     }

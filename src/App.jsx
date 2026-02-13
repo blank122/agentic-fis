@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Paperclip, Terminal, Zap, ArrowRight, Database, Shield, Cpu } from 'lucide-react';
+import { Send, Bot, User, Paperclip, Search, Zap, AlertTriangle, Database, Clock, Cpu, Globe } from 'lucide-react';
 import ChatView from './ChatView';
 import HomeView from './HomeView';
 

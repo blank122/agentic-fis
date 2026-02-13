@@ -124,7 +124,7 @@ const ChatView = ({ messages, input, setInput, handleSend, setView, messagesEndR
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        placeholder="Ask the agent to run a workflow..."
+                        placeholder="Ask the agent a question..."
                         className="flex-1 bg-transparent border-none focus:ring-0 text-sm px-2 py-2"
                     />
                     <button onClick={handleSend} className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 shadow-md">

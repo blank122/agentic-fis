@@ -57,16 +57,44 @@ export default function App() {
             const response = await fetch('http://localhost:8000/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [...messages, userMessage] }),
-            });
-            const data = await response.json();
-            setMessages(prev => {
+                // send `input` (list of messages) to match backend + Databricks
+                body: JSON.stringify({ input: [...messages, userMessage] }),
+              });
+
+              const data = await response.json();
+
+              setMessages(prev => {
                 const filtered = prev.filter(m => !m.isThinking);
-                return [...filtered, {
+
+                // Prefer Databricks agents response shape
+                const outputs = data.output || [];
+                let replyText = null;
+
+                // Walk outputs from last to first, pick the first non-<name>... tag
+                for (let i = outputs.length - 1; i >= 0; i--) {
+                  const t = outputs[i]?.content?.[0]?.text?.trim();
+                  if (t && !/^<name>.*<\/name>$/i.test(t)) {
+                    replyText = t;
+                    break;
+                  }
+                }
+
+                // Fallbacks for other response formats
+                if (!replyText) {
+                  replyText =
+                    data.choices?.[0]?.message?.content ??
+                    data.result ??
+                    "No response received.";
+                }
+
+                return [
+                  ...filtered,
+                  {
                     role: 'assistant',
-                    content: data.choices?.[0]?.message?.content || data.result || "No response received."
-                }];
-            });
+                    content: replyText,
+                  },
+                ];
+              });
         } catch (error) {
             setMessages(prev => [...prev.filter(m => !m.isThinking), { role: 'assistant', content: 'Error connecting to service.' }]);
         } finally {
@@ -144,8 +172,6 @@ export default function App() {
                     <div ref={messagesEndRef} />
                 </div>
             </main>
-            
-            {/* some changes */}
 
             <footer className="p-4 bg-white border-t">
                 <div className="max-w-3xl mx-auto">

@@ -12,20 +12,32 @@ export default function App() {
 
     const agents = [
         {
-            title: "Data Orchestrator",
-            desc: "Specializes in Databricks workflows and ETL pipelines.",
+            title: "Investment Portfolio & Financial Analysis Agent",
+            desc: "Money in / money out, comparisons, trends, portfolio concentration.",
             icon: <Database className="text-blue-500" />,
             capability: "Workflow Automation"
         },
         {
-            title: "Security Sentinel",
-            desc: "Monitors access logs and ensures compliance with FIS standards.",
+            title: "Country & Regional Strategy Agent",
+            desc: "Geographic performance, country comparisons, regional strategy.",
             icon: <Shield className="text-emerald-500" />,
             capability: "Audit & Compliance"
         },
         {
-            title: "Compute Optimizer",
-            desc: "Analyzes cluster performance and suggests cost-saving scaling.",
+            title: "Project Timeline & Delivery Monitoring Agent",
+            desc: "Delays, timelines, approvals vs reality, execution health.",
+            icon: <Cpu className="text-purple-500" />,
+            capability: "Resource Management"
+        },
+        {
+            title: "Risk, Status & Compliance Agent",
+            desc: "Risk exposure, environmental categories, project status health.",
+            icon: <Cpu className="text-purple-500" />,
+            capability: "Resource Management"
+        },
+        {
+            title: "Web Agent",
+            desc: "Filtering by document types, disclosure rules, metadata exploration.",
             icon: <Cpu className="text-purple-500" />,
             capability: "Resource Management"
         }
@@ -54,7 +66,7 @@ export default function App() {
         }]);
 
         try {
-            const response = await fetch('http://localhost:8000/ask', {
+            const response = await fetch('https://dbrix-orchestrator-2.onrender.com/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 // send `input` (list of messages) to match backend + Databricks

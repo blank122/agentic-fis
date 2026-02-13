@@ -1,72 +1,105 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Table, BarChart3, LayoutPanelLeft } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { Table as TableIcon, BarChart3 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const AgentVisualizer = ({ content }) => {
-  const [view, setView] = useState('table'); // 'table' or 'chart'
+  const [view, setView] = useState('table');
 
-  // Simple parser to turn Markdown tables into JSON for Recharts
-  const parseTableData = (text) => {
-    const lines = text.split('\n').filter(line => line.includes('|'));
+  const chartData = useMemo(() => {
+    const lines = content.split('\n').filter(line => line.includes('|'));
     if (lines.length < 3) return null;
 
-    // Extract headers and data rows
     const headers = lines[0].split('|').map(h => h.trim()).filter(Boolean);
-    const dataRows = lines.slice(2).map(row => {
+    
+    const data = lines.slice(2).map(row => {
       const cells = row.split('|').map(c => c.trim()).filter(Boolean);
       let obj = {};
       headers.forEach((header, i) => {
-        // Convert "$21,902 M" string to a number for the chart
-        const val = cells[i]?.replace(/[^0-9.-]/g, '');
-        obj[header] = isNaN(parseFloat(val)) ? cells[i] : parseFloat(val);
+        const rawValue = cells[i] || "";
+        // Clean currency, commas, and % to check for numbers
+        const numericClean = rawValue.replace(/[$,%]/g, '').trim();
+        const isNumeric = numericClean !== '' && !isNaN(numericClean);
+        
+        obj[header] = isNumeric ? parseFloat(numericClean) : rawValue;
       });
       return obj;
     });
-    return dataRows;
-  };
 
-  const chartData = parseTableData(content);
+    // CRITICAL: Only include columns that actually contain numbers for the bars
+    const numericKeys = headers.slice(1).filter(key => 
+      data.some(row => typeof row[key] === 'number')
+    );
+
+    return { data, numericKeys, xAxisKey: headers[0] };
+  }, [content]);
+
+  // If no numeric data is found, we should probably stay in table view
+  const hasChartableData = chartData && chartData.numericKeys.length > 0;
 
   return (
-    <div className="space-y-4">
-      {/* Switcher Tabs */}
-      {chartData && (
-        <div className="flex gap-2 mb-2 border-b border-slate-100 pb-2">
+    <div className="w-full bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* Tab Header */}
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-50/50 border-b border-slate-100">
+        <div className="flex gap-1">
           <button 
             onClick={() => setView('table')}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md text-xs transition ${view === 'table' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100'}`}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+              view === 'table' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:bg-slate-100'
+            }`}
           >
-            <Table size={14} /> Table
+            <TableIcon size={14} /> Table
           </button>
-          <button 
-            onClick={() => setView('chart')}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md text-xs transition ${view === 'chart' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100'}`}
-          >
-            <BarChart3 size={14} /> Chart
-          </button>
+          {hasChartableData && (
+            <button 
+              onClick={() => setView('chart')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                view === 'chart' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:bg-slate-100'
+              }`}
+            >
+              <BarChart3 size={14} /> Chart
+            </button>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Conditional Rendering */}
-      <div className="min-h-[300px]">
-        {view === 'table' || !chartData ? (
-          <div className="prose prose-sm max-w-none prose-slate">
-             <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <div className="p-4">
+        {view === 'table' || !hasChartableData ? (
+          <div className="prose prose-sm max-w-none prose-slate prose-th:bg-slate-50 prose-th:px-4 prose-td:px-4 prose-th:py-2">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
           </div>
         ) : (
-          <div className="h-[300px] w-full pt-4">
+          <div className="h-[350px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
+              <BarChart data={chartData.data} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey={Object.keys(chartData[0])[0]} tick={{fontSize: 12}} />
-                <YAxis tick={{fontSize: 12}} />
-                <Tooltip />
-                <Legend />
-                {/* Dynamically create bars for each column after the first one */}
-                {Object.keys(chartData[0]).slice(1).map((key, index) => (
-                  <Bar key={key} dataKey={key} fill={index % 2 === 0 ? '#2563eb' : '#fb7185'} radius={[4, 4, 0, 0]} />
+                <XAxis 
+                  dataKey={chartData.xAxisKey} 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{fill: '#64748b', fontSize: 11}}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{fill: '#64748b', fontSize: 11}}
+                />
+                <Tooltip 
+                  cursor={{fill: '#f8fafc'}}
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Legend verticalAlign="top" align="right" wrapperStyle={{ paddingBottom: '20px' }} />
+                
+                {chartData.numericKeys.map((key, index) => (
+                  <Bar 
+                    key={key} 
+                    dataKey={key} 
+                    fill={index % 2 === 0 ? '#3b82f6' : '#8b5cf6'} 
+                    radius={[4, 4, 0, 0]} 
+                    barSize={32}
+                  />
                 ))}
               </BarChart>
             </ResponsiveContainer>

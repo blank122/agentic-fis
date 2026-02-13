@@ -1,7 +1,7 @@
 import { Send, Bot, User, Paperclip, Terminal, Zap, ArrowRight, Database, Shield, Cpu } from 'lucide-react';
 
 
-export default HomeView = ({ setView, agents }) => {
+export default function HomeView  ({ setView, agents })  {
     <div className="flex-1 overflow-y-auto bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 py-20">
             <div className="text-center mb-16">
@@ -10,7 +10,7 @@ export default HomeView = ({ setView, agents }) => {
                 </div>
                 <h1 className="text-5xl font-bold text-slate-900 mb-6">FIS Agentic Hub</h1>
                 <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                    Deploy, manage, and interact with specialized AI agents powered by Databricks Mosaic AI.
+                    Interact with specialized AI agents powered by Databricks Mosaic AI.
                 </p>
                 <button 
                     onClick={() => setView('chat')}
